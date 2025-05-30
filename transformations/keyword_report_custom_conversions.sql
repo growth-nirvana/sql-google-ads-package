@@ -46,7 +46,7 @@ SELECT
     COALESCE(adGroupCriterion__keyword__matchType, ''),
     COALESCE(CAST(campaign__id AS STRING), ''),
     COALESCE(segments__conversionActionName, ''),
-    COALESCE(DATE(segments__date), '')
+    COALESCE(segments__date, '')
   ))) AS _gn_id,
   CAST(customer__id AS INT64) AS customer_id,
   DATE(segments__date) AS date,

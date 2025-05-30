@@ -166,7 +166,7 @@ BEGIN TRANSACTION;
     TO_HEX(SHA256(CONCAT(
       COALESCE(CAST(customer__id AS STRING), ''),
       COALESCE(CAST(campaign__id AS STRING), ''),
-      COALESCE(DATE(segments__date), ''),
+      COALESCE(segments__date, ''),
       COALESCE(CAST(adGroup__id AS STRING), ''),
       COALESCE(CAST(adGroupCriterion__criterionId AS STRING), ''),
       COALESCE(adGroupCriterion__keyword__text, ''),

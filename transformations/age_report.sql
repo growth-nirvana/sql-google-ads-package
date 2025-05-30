@@ -45,7 +45,7 @@ SELECT
     COALESCE(adGroupCriterion__ageRange__type, ''),
     COALESCE(CAST(adGroupCriterion__criterionId AS STRING), ''),
     COALESCE(CAST(campaign__id AS STRING), ''),
-    COALESCE(DATE(segments__date), ''),
+    COALESCE(segments__date, ''),
     COALESCE(tenant, '')
   ))) AS _gn_id,
   CAST(customer__id AS INT64) AS customer_id,

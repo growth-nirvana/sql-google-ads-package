@@ -61,7 +61,7 @@ SELECT
     COALESCE(CAST(adGroup__id AS STRING), ''),
     COALESCE(CAST(adGroupAd__ad__id AS STRING), ''),
     COALESCE(CAST(campaign__id AS STRING), ''),
-    COALESCE(DATE(segments__date), ''),
+    COALESCE(segments__date, ''),
     COALESCE(segments__adNetworkType, ''),
     COALESCE(segments__device, '')
   ))) AS _gn_id,
@@ -102,11 +102,11 @@ WHERE run_id = (
 
 -- Step 2: Assign min/max dates using SET + scalar subqueries
 SET min_date = (
-  SELECT MIN(DATE(segments__date)) FROM latest_batch
+  SELECT MIN(DATE(date)) FROM latest_batch
 );
 
 SET max_date = (
-  SELECT MAX(DATE(segments__date)) FROM latest_batch
+  SELECT MAX(DATE(date)) FROM latest_batch
 );
 
 -- Step 3: Conditional delete and insert
@@ -117,7 +117,7 @@ BEGIN TRANSACTION;
     FROM `{{target_dataset}}.{{target_table_id}}`
     WHERE date BETWEEN min_date AND max_date
       AND customer_id IN (
-        SELECT DISTINCT CAST(customer__id AS INT64)
+        SELECT DISTINCT CAST(customer_id AS INT64)
         FROM latest_batch
       )
     LIMIT 1
@@ -125,7 +125,7 @@ BEGIN TRANSACTION;
     DELETE FROM `{{target_dataset}}.{{target_table_id}}`
     WHERE date BETWEEN min_date AND max_date
       AND customer_id IN (
-        SELECT DISTINCT CAST(customer__id AS INT64)
+        SELECT DISTINCT CAST(customer_id AS INT64)
         FROM latest_batch
       );
   END IF;

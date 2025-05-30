@@ -120,7 +120,7 @@ BEGIN TRANSACTION;
     TO_HEX(SHA256(CONCAT(
       COALESCE(CAST(customer__id AS STRING), ''),
       COALESCE(CAST(campaign__id AS STRING), ''),
-      COALESCE(DATE(segments__date), ''),
+      COALESCE(segments__date, ''),
       COALESCE(segments__device, ''),
       COALESCE(tenant, '')
     ))) AS _gn_id,

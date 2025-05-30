@@ -45,7 +45,7 @@ SELECT
     COALESCE(CAST(adGroup__id AS STRING), ''),
     COALESCE(geographicView__countryCriterionId, ''),
     COALESCE(geographicView__locationType, ''),
-    COALESCE(DATE(segments__date), ''),
+    COALESCE(segments__date, ''),
     COALESCE(tenant, '')
   ))) AS _gn_id,
   CAST(customer__id AS INT64) AS customer_id,

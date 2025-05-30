@@ -45,9 +45,14 @@ WHERE run_id = (
   FROM `{{source_dataset}}.{{source_table_id}}`
 );
 
--- Step 2: Set min/max date
-SET min_date = (SELECT MIN(date) FROM latest_batch);
-SET max_date = (SELECT MAX(date) FROM latest_batch);
+-- Step 2: Assign min/max dates using SET + scalar subqueries
+SET min_date = (
+  SELECT MIN(DATE(segments__date)) FROM latest_batch
+);
+
+SET max_date = (
+  SELECT MAX(DATE(segments__date)) FROM latest_batch
+);
 
 -- Step 3: Delete + Insert safely
 BEGIN TRANSACTION;
@@ -80,19 +85,24 @@ BEGIN TRANSACTION;
     all_conversions
   )
   SELECT
-    _gn_id,
-    customer_id,
-    date,
-    _gn_synced,
-    all_conversions_value,
-    conversions_value,
-    conversions,
-    ad_id,
-    conversion_action_name,
-    campaign_id,
-    ad_group_id,
-    device,
-    all_conversions
+    TO_HEX(SHA256(CONCAT(
+      COALESCE(CAST(customer__id AS STRING), ''),
+      COALESCE(CAST(adGroupAd__ad__id AS STRING), ''),
+      COALESCE(segments__date, ''),
+      COALESCE(segments__conversionActionName, '')
+    ))) as _gn_id,
+    CAST(customer__id AS INT64) as customer_id,
+    DATE(segments__date) as date,
+    _time_loaded as _gn_synced,
+    metrics__allConversionsValue as all_conversions_value,
+    metrics__conversionsValue as conversions_value,
+    metrics__conversions as conversions,
+    CAST(adGroupAd__ad__id AS INT64) as ad_id,
+    segments__conversionActionName as conversion_action_name,
+    CAST(campaign__id AS INT64) as campaign_id,
+    CAST(adGroup__id AS INT64) as ad_group_id,
+    segments__device as device,
+    metrics__allConversions as all_conversions
   FROM latest_batch;
 
 

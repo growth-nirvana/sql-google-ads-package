@@ -49,7 +49,7 @@ SELECT
     COALESCE(segments__keyword__adGroupCriterion, ''),
     COALESCE(segments__keyword__info, ''),
     COALESCE(segments__searchTermMatchType, ''),
-    COALESCE(DATE(segments__date), ''),
+    COALESCE(segments__date, ''),
     COALESCE(tenant, '')
   ))) AS _gn_id,
   CAST(customer__id AS INT64) AS customer_id,

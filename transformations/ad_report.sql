@@ -203,7 +203,7 @@ BEGIN TRANSACTION;
       COALESCE(CAST(adGroupAd__ad__id AS STRING), ''),
       COALESCE(CAST(adGroup__id AS STRING), ''),
       COALESCE(CAST(campaign__id AS STRING), ''),
-      COALESCE(DATE(segments__date), ''),
+      COALESCE(segments__date, ''),
       COALESCE(campaign__name, ''),
       COALESCE(adGroup__name, ''),
       COALESCE(adGroupAd__ad__type, ''),

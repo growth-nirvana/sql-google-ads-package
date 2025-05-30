@@ -113,8 +113,8 @@ BEGIN TRANSACTION;
       COALESCE(CAST(campaign__id AS STRING), ''),
       COALESCE(geographicView__locationType, ''),
       COALESCE(segments__geoTargetPostalCode, ''),
-      COALESCE(DATE(segments__date), '')
-    )),
+      COALESCE(segments__date, '')
+    ))),
     CURRENT_TIMESTAMP()
   FROM latest_batch;
 
