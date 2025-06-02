@@ -206,8 +206,7 @@ BEGIN TRANSACTION;
       COALESCE(segments__date, ''),
       COALESCE(campaign__name, ''),
       COALESCE(adGroup__name, ''),
-      COALESCE(adGroupAd__ad__type, ''),
-      COALESCE(adGroupAd__ad__devicePreference, '')
+      COALESCE(adGroupAd__ad__type, '')
     ))) AS _gn_id,
     CURRENT_TIMESTAMP() AS _gn_synced
   FROM latest_batch;

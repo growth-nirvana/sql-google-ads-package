@@ -78,7 +78,7 @@ SELECT
     COALESCE(CAST(NULL AS STRING), ''),
     COALESCE(adGroup__campaign, ''),
     COALESCE(CAST(NULL AS STRING), ''),
-    COALESCE(CAST(NULL AS BOOL), ''),
+    COALESCE(CAST(NULL AS STRING), ''),
     COALESCE(CAST(NULL AS STRING), ''),
     adGroup__name,
     adGroup__status,
