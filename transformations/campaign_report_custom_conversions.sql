@@ -4,6 +4,7 @@
 
 {% assign source_dataset = vars.source_dataset_id %}
 {% assign source_table_id = 'stream_campaign_report_custom_conversions' %}
+{% assign drop_source_table = vars.drop_source_table | default: false %}
 
 {% if vars.models.switchover_campaign_report_custom_conversions.active == false %}
 select 1
@@ -36,7 +37,8 @@ CREATE TABLE IF NOT EXISTS `{{target_dataset}}.{{target_table_id}}` (
   _gn_synced TIMESTAMP,
   id INT64,
   name STRING,
-  status STRING
+  status STRING,
+  run_id INT64
 );
 
 -- Step 1: Create temp table for latest batch using run_id
@@ -91,7 +93,8 @@ BEGIN TRANSACTION;
     _gn_synced,
     id,
     name,
-    status
+    status,
+    run_id
   )
   SELECT 
     CAST(metrics__allConversions AS FLOAT64),
@@ -113,13 +116,17 @@ BEGIN TRANSACTION;
     CURRENT_TIMESTAMP(),
     CAST(campaign__id AS INT64),
     campaign__name,
-    CAST(NULL AS STRING)
+    CAST(NULL AS STRING),
+    run_id
   FROM latest_batch;
   
 
 COMMIT TRANSACTION;
+
+{% if drop_source_table %}
 -- Drop the source table after successful insertion
 DROP TABLE IF EXISTS `{{source_dataset}}.{{source_table_id}}`;
+{% endif %}
 
 END IF;
 

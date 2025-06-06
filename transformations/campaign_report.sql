@@ -4,6 +4,7 @@
 
 {% assign source_dataset = vars.source_dataset_id %}
 {% assign source_table_id = 'stream_campaign_report' %}
+{% assign drop_source_table = vars.drop_source_table | default: false %}
 
 {% if vars.models.switchover_campaign_report.active == false %}
 select 1
@@ -47,6 +48,7 @@ CREATE TABLE IF NOT EXISTS `{{target_dataset}}.{{target_table_id}}` (
   search_rank_lost_top_impression_share FLOAT64,
   search_top_impression_share FLOAT64,
   top_impression_percentage FLOAT64,
+  run_id INT64,
   _gn_id STRING,
   _gn_synced TIMESTAMP
 );
@@ -115,6 +117,7 @@ BEGIN TRANSACTION;
     search_rank_lost_top_impression_share,
     search_top_impression_share,
     top_impression_percentage,
+    run_id,
     _gn_id,
     _gn_synced
   )
@@ -142,6 +145,7 @@ BEGIN TRANSACTION;
     SAFE_CAST(metrics__searchRankLostTopImpressionShare AS FLOAT64),
     SAFE_CAST(metrics__searchTopImpressionShare AS FLOAT64),
     SAFE_CAST(metrics__topImpressionPercentage AS FLOAT64),
+    run_id,
     TO_HEX(SHA256(CONCAT(
       COALESCE(CAST(customer__id AS STRING), ''),
       COALESCE(CAST(campaign__id AS STRING), ''),
@@ -152,8 +156,11 @@ BEGIN TRANSACTION;
   FROM latest_batch;
 
 COMMIT TRANSACTION;
+
+{% if drop_source_table %}
 -- Drop the source table after successful insertion
 DROP TABLE IF EXISTS `{{source_dataset}}.{{source_table_id}}`;
+{% endif %}
 
 END IF;
 
