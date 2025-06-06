@@ -3,6 +3,7 @@
 {% assign target_table_id = 'ad_performance_report_conversion_stats' %}
 {% assign source_dataset = vars.source_dataset_id %}
 {% assign source_table_id = 'stream_ad_performance_report_conversion_stats' %}
+{% assign drop_source_table = vars.drop_source_table | default: false %}
 
 DECLARE min_date DATE;
 DECLARE max_date DATE;
@@ -107,7 +108,9 @@ BEGIN TRANSACTION;
 
 
 COMMIT TRANSACTION;
+{% if drop_source_table %}
 -- Drop the source table after successful insertion
 DROP TABLE IF EXISTS `{{source_dataset}}.{{source_table_id}}`;
+{% endif %}
 
 END IF;

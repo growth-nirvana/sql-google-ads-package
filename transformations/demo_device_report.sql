@@ -4,6 +4,7 @@
 
 {% assign source_dataset = vars.source_dataset_id %}
 {% assign source_table_id = 'stream_demo_device' %}
+{% assign drop_source_table = vars.drop_source_table | default: false %}
 
 {% if vars.models.demo_device_report.active == false %}
 select 1
@@ -129,8 +130,10 @@ BEGIN TRANSACTION;
 
 COMMIT TRANSACTION;
 
+{% if drop_source_table %}
 -- Drop the source table after successful insertion
 DROP TABLE IF EXISTS `{{source_dataset}}.{{source_table_id}}`;
+{% endif %}
 
 END IF;
 

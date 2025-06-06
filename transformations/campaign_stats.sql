@@ -4,6 +4,7 @@
 
 {% assign source_dataset = vars.source_dataset_id %}
 {% assign source_table_id = 'stream_campaign_stats' %}
+{% assign drop_source_table = vars.drop_source_table | default: false %}
 
 {% if vars.models.switchover_campaign_stats.active == false %}
 select 1
@@ -161,8 +162,10 @@ CREATE TABLE IF NOT EXISTS `{{target_dataset}}.{{target_table_id}}` (
     FROM latest_batch;
 
   COMMIT TRANSACTION;
-  -- Drop the source table after successful insertion
-  DROP TABLE IF EXISTS `{{source_dataset}}.{{source_table_id}}`;
+{% if drop_source_table %}
+-- Drop the source table after successful insertion
+DROP TABLE IF EXISTS `{{source_dataset}}.{{source_table_id}}`;
+{% endif %}
 END IF;
 
 {% endif %} 

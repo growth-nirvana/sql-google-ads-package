@@ -4,6 +4,7 @@
 
 {% assign source_dataset = vars.source_dataset_id %}
 {% assign source_table_id = 'stream_geo_target_constant' %}
+{% assign drop_source_table = vars.drop_source_table | default: false %}
 
 {% if vars.models.switchover_geo_target_constant.active == false %}
 select 1
@@ -115,8 +116,10 @@ BEGIN TRANSACTION;
   FROM latest_batch;
 
 COMMIT TRANSACTION;
+{% if drop_source_table %}
 -- Drop the source table after successful insertion
 DROP TABLE IF EXISTS `{{source_dataset}}.{{source_table_id}}`;
+{% endif %}
 
 END IF;
 
