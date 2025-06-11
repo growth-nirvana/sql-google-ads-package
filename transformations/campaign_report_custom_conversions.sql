@@ -19,9 +19,6 @@ SET table_exists = (
   WHERE table_name = '{{source_table_id}}'
 );
 
--- Only proceed if the source table exists
-IF table_exists THEN
-
 -- Create target table if it doesn't exist
 CREATE TABLE IF NOT EXISTS `{{target_dataset}}.{{target_table_id}}` (
   all_conversions FLOAT64,
@@ -38,6 +35,9 @@ CREATE TABLE IF NOT EXISTS `{{target_dataset}}.{{target_table_id}}` (
   name STRING,
   status STRING
 );
+
+-- Only proceed if the source table exists
+IF table_exists THEN
 
 -- Step 1: Create temp table for latest batch using run_id
 CREATE TEMP TABLE latest_batch AS
