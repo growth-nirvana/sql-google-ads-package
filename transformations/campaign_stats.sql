@@ -46,6 +46,7 @@ CREATE TABLE IF NOT EXISTS `{{target_dataset}}.{{target_table_id}}` (
   interaction_event_types STRING,
   interactions INT64,
   view_through_conversions INT64
+  run_id INT64
 );
 
   -- Step 1: Create temp table for latest batch
@@ -135,7 +136,8 @@ CREATE TABLE IF NOT EXISTS `{{target_dataset}}.{{target_table_id}}` (
       impressions,
       interaction_event_types,
       interactions,
-      view_through_conversions
+      view_through_conversions,
+      run_id
     )
     SELECT 
       _gn_id,
@@ -158,7 +160,8 @@ CREATE TABLE IF NOT EXISTS `{{target_dataset}}.{{target_table_id}}` (
       impressions,
       interaction_event_types,
       interactions,
-      view_through_conversions
+      view_through_conversions,
+      run_id
     FROM latest_batch;
 
   COMMIT TRANSACTION;

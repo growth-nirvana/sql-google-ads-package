@@ -33,7 +33,8 @@ CREATE TABLE IF NOT EXISTS `{{target_dataset}}.{{target_table_id}}` (
   conversion_action_name STRING,
   keyword_match_type STRING,
   ad_group_id INT64,
-  all_conversions FLOAT64
+  all_conversions FLOAT64,
+  run_id INT64
 );
 
 -- Step 1: Create temp table for latest batch using run_id
@@ -99,7 +100,8 @@ BEGIN TRANSACTION;
     conversion_action_name,
     keyword_match_type,
     ad_group_id,
-    all_conversions
+    all_conversions,
+    run_id
   )
   SELECT
     _gn_id,
@@ -114,7 +116,8 @@ BEGIN TRANSACTION;
     conversion_action_name,
     keyword_match_type,
     ad_group_id,
-    all_conversions
+    all_conversions,
+    run_id
   FROM latest_batch;
 
 COMMIT TRANSACTION;

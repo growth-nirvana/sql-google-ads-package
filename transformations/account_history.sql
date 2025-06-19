@@ -49,8 +49,16 @@ CREATE TABLE IF NOT EXISTS `{{target_dataset}}.{{target_table_id}}` (
 -- Step 1: Create temp table for latest batch with deduplication
 CREATE TEMP TABLE latest_batch AS
 WITH base AS (
-  SELECT *
+  SELECT 
+    *,
+    ROW_NUMBER() OVER (PARTITION BY customer__id ORDER BY _time_extracted DESC) as rn
   FROM `{{source_dataset}}.{{source_table_id}}`
+  WHERE customer__id IS NOT NULL
+),
+deduped AS (
+  SELECT * EXCEPT(rn)
+  FROM base
+  WHERE rn = 1
 )
 SELECT 
   CURRENT_TIMESTAMP() AS _gn_start,
@@ -87,7 +95,7 @@ SELECT
     customer__timeZone,
     CAST(NULL AS STRING)
   ))) AS _gn_id
-FROM base;
+FROM deduped;
 
 -- Step 2: Handle SCD Type 2 changes
 BEGIN TRANSACTION;

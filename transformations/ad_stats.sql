@@ -50,7 +50,8 @@ CREATE TABLE IF NOT EXISTS `{{target_dataset}}.{{target_table_id}}` (
   interaction_event_types STRING,
   interactions INT64,
   video_views INT64,
-  view_through_conversions INT64
+  view_through_conversions INT64,
+  run_id INT64
 );
 
 
@@ -94,7 +95,8 @@ SELECT
   metrics__interactionEventTypes AS interaction_event_types,
   CAST(metrics__interactions AS INT64) AS interactions,
   CAST(NULL AS INT64) AS video_views,
-  CAST(metrics__viewThroughConversions AS INT64) AS view_through_conversions
+  CAST(metrics__viewThroughConversions AS INT64) AS view_through_conversions,
+  run_id
 FROM `{{source_dataset}}.{{source_table_id}}`
 WHERE run_id = (
   SELECT MAX(run_id)
@@ -157,7 +159,8 @@ BEGIN TRANSACTION;
     interaction_event_types,
     interactions,
     video_views,
-    view_through_conversions
+    view_through_conversions,
+    run_id
   )
   SELECT 
     _gn_id,
@@ -185,7 +188,8 @@ BEGIN TRANSACTION;
     interaction_event_types,
     interactions,
     video_views,
-    view_through_conversions
+    view_through_conversions,
+    run_id
   FROM latest_batch;
 
 

@@ -57,7 +57,8 @@ CREATE TABLE IF NOT EXISTS `{{target_dataset}}.{{target_table_id}}` (
   historical_quality_score INT64,
   historical_search_predicted_ctr STRING,
   _gn_id STRING,
-  _gn_synced TIMESTAMP
+  _gn_synced TIMESTAMP,
+  run_id INT64
 );
 
 -- Step 1: Create temp table for latest batch using run_id
@@ -131,7 +132,8 @@ BEGIN TRANSACTION;
     historical_quality_score,
     historical_search_predicted_ctr,
     _gn_id,
-    _gn_synced
+    _gn_synced,
+    run_id
   )
   SELECT 
     CAST(customer__id AS INT64),
@@ -178,7 +180,8 @@ BEGIN TRANSACTION;
       COALESCE(CAST(metrics__historicalQualityScore AS STRING), ''),
       COALESCE(metrics__historicalSearchPredictedCtr, '')
     ))) AS _gn_id,
-    CURRENT_TIMESTAMP() AS _gn_synced
+    CURRENT_TIMESTAMP() AS _gn_synced,
+    run_id
   FROM latest_batch;
 
 COMMIT TRANSACTION;

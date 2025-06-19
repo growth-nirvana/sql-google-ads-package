@@ -33,7 +33,8 @@ CREATE TABLE IF NOT EXISTS `{{target_dataset}}.{{target_table_id}}` (
   campaign_id INT64,
   ad_group_id INT64,
   device STRING,
-  all_conversions FLOAT64
+  all_conversions FLOAT64,
+  run_id INT64
 );
 
 
@@ -83,7 +84,8 @@ BEGIN TRANSACTION;
     campaign_id,
     ad_group_id,
     device,
-    all_conversions
+    all_conversions,
+    run_id
   )
   SELECT
     TO_HEX(SHA256(CONCAT(
@@ -103,7 +105,8 @@ BEGIN TRANSACTION;
     CAST(campaign__id AS INT64) as campaign_id,
     CAST(adGroup__id AS INT64) as ad_group_id,
     segments__device as device,
-    metrics__allConversions as all_conversions
+    metrics__allConversions as all_conversions,
+    run_id
   FROM latest_batch;
 
 

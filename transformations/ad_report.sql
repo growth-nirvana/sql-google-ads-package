@@ -68,7 +68,8 @@ CREATE TABLE IF NOT EXISTS `{{target_dataset}}.{{target_table_id}}` (
   impressions INT64,
   view_through_conversions INT64,
   _gn_id STRING,
-  _gn_synced TIMESTAMP
+  _gn_synced TIMESTAMP,
+  run_id INT64
 );
 
 -- Step 1: Create temp table for latest batch
@@ -154,7 +155,8 @@ BEGIN TRANSACTION;
     impressions,
     view_through_conversions,
     _gn_id,
-    _gn_synced
+    _gn_synced,
+    run_id
   )
   SELECT 
     CAST(customer__id AS INT64),
@@ -209,7 +211,8 @@ BEGIN TRANSACTION;
       COALESCE(adGroup__name, ''),
       COALESCE(adGroupAd__ad__type, '')
     ))) AS _gn_id,
-    CURRENT_TIMESTAMP() AS _gn_synced
+    CURRENT_TIMESTAMP() AS _gn_synced,
+    run_id
   FROM latest_batch;
 
 COMMIT TRANSACTION;
