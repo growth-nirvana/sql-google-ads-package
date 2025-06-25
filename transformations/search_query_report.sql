@@ -36,6 +36,8 @@ CREATE TABLE IF NOT EXISTS `{{target_dataset}}.{{target_table_id}}` (
   conversions_value FLOAT64,
   cost_micros FLOAT64,
   impressions FLOAT64,
+  info_match_type STRING,
+  info_text STRING,
   tenant STRING
 );
 
@@ -67,6 +69,8 @@ SELECT
   metrics__conversionsValue AS conversions_value,
   metrics__costMicros AS cost_micros,
   metrics__impressions AS impressions,
+  JSON_EXTRACT_SCALAR(segments__keyword__info, '$.matchType') AS info_match_type,
+  JSON_EXTRACT_SCALAR(segments__keyword__info, '$.text') AS info_text,
   tenant
 FROM `{{source_dataset}}.{{source_table_id}}`
 WHERE run_id = (
@@ -109,6 +113,8 @@ BEGIN TRANSACTION;
     conversions_value,
     cost_micros,
     impressions,
+    info_match_type,
+    info_text,
     tenant
   )
   SELECT
@@ -127,6 +133,8 @@ BEGIN TRANSACTION;
     conversions_value,
     cost_micros,
     impressions,
+    info_match_type,
+    info_text,
     tenant
   FROM latest_batch;
 
