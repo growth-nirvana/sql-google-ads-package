@@ -61,7 +61,8 @@ SELECT
   segments__conversionActionName AS conversion_action_name,
   adGroupCriterion__keyword__matchType AS keyword_match_type,
   CAST(adGroup__id AS INT64) AS ad_group_id,
-  CAST(metrics__allConversions AS FLOAT64) AS all_conversions
+  CAST(metrics__allConversions AS FLOAT64) AS all_conversions,
+  run_id
 FROM `{{source_dataset}}.{{source_table_id}}`
 WHERE run_id = (
   SELECT MAX(run_id)
